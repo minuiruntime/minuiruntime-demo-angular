@@ -1,12 +1,75 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, signal, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { StreamingService } from '../services/streaming.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [CommonModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
-  protected readonly title = signal('minui-temp');
+export class App implements OnDestroy {
+  protected readonly title = signal('MinUI Demo');
+  protected readonly isStreaming = signal(false);
+  protected readonly patchCount = signal(0);
+  protected readonly htmlContent = signal<SafeHtml>('');
+  
+  private streamSubscription?: Subscription;
+  private autoStopTimeout?: any;
+  private readonly AUTO_STOP_DURATION = 2 * 60 * 1000; // 2 minutes
+
+  constructor(
+    private streamingService: StreamingService,
+    private sanitizer: DomSanitizer
+  ) {}
+
+  startStreaming(): void {
+    if (this.isStreaming()) return;
+
+    this.isStreaming.set(true);
+    this.htmlContent.set('');
+    this.patchCount.set(0);
+
+    // Start streaming with 500ms intervals
+    let accumulatedHtml = '';
+    this.streamSubscription = this.streamingService.startStreaming(500).subscribe({
+      next: ({ html, patchCount }) => {
+        accumulatedHtml += html;
+        this.htmlContent.set(this.sanitizer.bypassSecurityTrustHtml(accumulatedHtml));
+        this.patchCount.set(patchCount);
+      },
+      error: (error) => {
+        console.error('Streaming error:', error);
+        this.stopStreaming();
+      }
+    });
+
+    // Auto-stop after 2 minutes
+    this.autoStopTimeout = setTimeout(() => {
+      this.stopStreaming();
+    }, this.AUTO_STOP_DURATION);
+  }
+
+  stopStreaming(): void {
+    if (!this.isStreaming()) return;
+
+    this.isStreaming.set(false);
+    this.streamingService.stopStreaming();
+    
+    if (this.streamSubscription) {
+      this.streamSubscription.unsubscribe();
+      this.streamSubscription = undefined;
+    }
+
+    if (this.autoStopTimeout) {
+      clearTimeout(this.autoStopTimeout);
+      this.autoStopTimeout = undefined;
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.stopStreaming();
+  }
 }
