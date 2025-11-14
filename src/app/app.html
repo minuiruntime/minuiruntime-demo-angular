@@ -1,0 +1,50 @@
+<div class="app-container">
+  <header class="app-header">
+    <h1>{{ title() }}</h1>
+    <p class="subtitle">Real-time AI UI Streaming with MinUIRuntime WASM</p>
+  </header>
+
+  <div class="main-content">
+    <div class="controls-section">
+      <div class="controls">
+        <button 
+          class="btn btn-start" 
+          (click)="startStreaming()" 
+          [disabled]="isStreaming()">
+          Start Streaming
+        </button>
+        <button 
+          class="btn btn-stop" 
+          (click)="stopStreaming()" 
+          [disabled]="!isStreaming()">
+          Stop
+        </button>
+      </div>
+      
+      <div class="status-info">
+        <div class="status-badge" [class.active]="isStreaming()">
+          {{ isStreaming() ? 'Streaming' : 'Idle' }}
+        </div>
+        <div class="patch-counter">
+          Patches: <span class="counter-value">{{ patchCount() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-section">
+      <h2>Live Preview</h2>
+      <div class="preview-container" [innerHTML]="htmlContent()"></div>
+      
+      @if (!isStreaming() && patchCount() === 0) {
+        <div class="empty-state">
+          <p>Click "Start Streaming" to begin the demo</p>
+          <p class="hint">Components will appear here in real-time as JSON fragments are processed</p>
+        </div>
+      }
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <p>Auto-stops after 2 minutes • Streaming interval: 500ms</p>
+  </footer>
+</div>
