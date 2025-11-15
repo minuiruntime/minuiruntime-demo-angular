@@ -11,10 +11,11 @@ import { Subscription } from 'rxjs';
   styleUrl: './app.css'
 })
 export class App implements OnDestroy {
-  protected readonly title = signal('MinUI Demo');
-  protected readonly isStreaming = signal(false);
-  protected readonly patchCount = signal(0);
-  protected readonly htmlContent = signal<SafeHtml>('');
+  // Made public for testing - in production would be protected
+  public readonly title = signal('MinUI Demo');
+  public readonly isStreaming = signal(false);
+  public readonly patchCount = signal(0);
+  public readonly htmlContent = signal<SafeHtml>('');
   
   private streamSubscription?: Subscription;
   private autoStopTimeout?: any;
