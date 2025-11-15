@@ -32,16 +32,20 @@ export class App implements OnDestroy {
     this.htmlContent.set('');
     this.patchCount.set(0);
 
+    console.log('Starting streaming...');
+    
     // Start streaming with 500ms intervals
     let accumulatedHtml = '';
     this.streamSubscription = this.streamingService.startStreaming(500).subscribe({
       next: ({ html, patchCount }) => {
+        console.log('Received fragment, patch count:', patchCount);
         accumulatedHtml += html;
         this.htmlContent.set(this.sanitizer.bypassSecurityTrustHtml(accumulatedHtml));
         this.patchCount.set(patchCount);
       },
       error: (error) => {
         console.error('Streaming error:', error);
+        alert('Error: ' + error.message);
         this.stopStreaming();
       }
     });
