@@ -1,6 +1,6 @@
 {
 	"name": "Angular Development",
-	"image": "mcr.microsoft.com/devcontainers/typescript-node:latest",
+	"image": "mcr.microsoft.com/devcontainers/typescript-node:latest", 
 	
 	// Features to install
 	"features": {},
@@ -29,7 +29,7 @@
 		}
 	},
 	
-	// Use 'postCreateCommand' to run commands after the container is created
+	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "npm install -g @angular/cli && npm install && ng version",
 	
 	// Install common Angular dev dependencies
