@@ -41,42 +41,119 @@ export class StreamingService {
       'Feature E in queue'
     ];
 
+    // Generate MinUI-compatible VNode structure
     switch (type) {
       case 'message':
         return JSON.stringify({
-          type: 'message',
-          author: authors[Math.floor(Math.random() * authors.length)],
-          content: contents[Math.floor(Math.random() * contents.length)],
-          timestamp: new Date().toISOString()
+          type: 'element',
+          tag: 'div',
+          attrs: { class: 'message-box' },
+          children: [
+            {
+              type: 'element',
+              tag: 'div',
+              attrs: { class: 'message-header' },
+              children: [
+                {
+                  type: 'text',
+                  value: authors[Math.floor(Math.random() * authors.length)]
+                }
+              ]
+            },
+            {
+              type: 'element',
+              tag: 'div',
+              attrs: { class: 'message-content' },
+              children: [
+                {
+                  type: 'text',
+                  value: contents[Math.floor(Math.random() * contents.length)]
+                }
+              ]
+            }
+          ]
         });
 
       case 'card':
         return JSON.stringify({
-          type: 'card',
-          title: titles[Math.floor(Math.random() * titles.length)],
-          body: contents[Math.floor(Math.random() * contents.length)]
+          type: 'element',
+          tag: 'div',
+          attrs: { class: 'card-component' },
+          children: [
+            {
+              type: 'element',
+              tag: 'h3',
+              attrs: { class: 'card-title' },
+              children: [
+                {
+                  type: 'text',
+                  value: titles[Math.floor(Math.random() * titles.length)]
+                }
+              ]
+            },
+            {
+              type: 'element',
+              tag: 'p',
+              attrs: { class: 'card-body' },
+              children: [
+                {
+                  type: 'text',
+                  value: contents[Math.floor(Math.random() * contents.length)]
+                }
+              ]
+            }
+          ]
         });
 
       case 'list':
         const numItems = Math.floor(Math.random() * 3) + 2;
         const selectedItems = [];
         for (let i = 0; i < numItems; i++) {
-          selectedItems.push(items[Math.floor(Math.random() * items.length)]);
+          selectedItems.push({
+            type: 'element',
+            tag: 'li',
+            attrs: {},
+            children: [
+              {
+                type: 'text',
+                value: items[Math.floor(Math.random() * items.length)]
+              }
+            ]
+          });
         }
         return JSON.stringify({
-          type: 'list',
-          items: selectedItems
+          type: 'element',
+          tag: 'ul',
+          attrs: { class: 'list-component' },
+          children: selectedItems
         });
 
       case 'button':
         return JSON.stringify({
-          type: 'button',
-          label: ['Click Me', 'Action', 'Submit', 'Next'][Math.floor(Math.random() * 4)]
+          type: 'element',
+          tag: 'button',
+          attrs: { class: 'button-component' },
+          children: [
+            {
+              type: 'text',
+              value: ['Click Me', 'Action', 'Submit', 'Next'][Math.floor(Math.random() * 4)]
+            }
+          ]
         });
 
       case 'text':
       default:
-        return JSON.stringify(contents[Math.floor(Math.random() * contents.length)]);
+        return JSON.stringify({
+          type: 'element',
+          tag: 'p',
+          attrs: { class: 'text-fragment' },
+          children: [
+            {
+              type: 'text',
+              value: contents[Math.floor(Math.random() * contents.length)]
+            }
+          ]
+        });
     }
   }
 
