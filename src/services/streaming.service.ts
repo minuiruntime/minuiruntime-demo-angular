@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, interval, Subject } from 'rxjs';
-import { takeUntil, map } from 'rxjs/operators';
+import { Observable, interval, Subject, from } from 'rxjs';
+import { takeUntil, map, switchMap } from 'rxjs/operators';
 import { StreamingRenderer } from '../lib/streaming-renderer';
 
 @Injectable({
@@ -91,9 +91,9 @@ export class StreamingService {
 
     return interval(intervalMs).pipe(
       takeUntil(this.stopSubject),
-      map(() => {
+      switchMap(async () => {
         const fragment = this.generateRandomFragment();
-        const html = this.renderer.processFragment(fragment);
+        const html = await this.renderer.processFragment(fragment);
         const patchCount = this.renderer.getPatchCount();
         return { html, patchCount };
       })
