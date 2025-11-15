@@ -1,0 +1,40 @@
+{
+	"name": "Angular Development",
+	"image": "mcr.microsoft.com/devcontainers/typescript-node:latest",
+	
+	// Features to install
+	"features": {},
+	
+	// Configure tool-specific properties
+	"customizations": {
+		"vscode": {
+			// Add extensions
+			"extensions": [
+				"Angular.ng-template",
+				"esbenp.prettier-vscode",
+				"dbaeumer.vscode-eslint"
+			],
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "bash"
+			}
+		}
+	},
+	
+	// Forward ports - 4200 is for Angular Live Server
+	"forwardPorts": [4200],
+	"portsAttributes": {
+		"4200": {
+			"label": "Angular Dev Server",
+			"onAutoForward": "notify"
+		}
+	},
+	
+	// Use 'postCreateCommand' to run commands after the container is created
+	"postCreateCommand": "npm install -g @angular/cli && npm install && ng version",
+	
+	// Install common Angular dev dependencies
+	"postAttachCommand": "npm install --save-dev @angular/material rxjs typescript zone.js eslint",
+	
+	// Comment out to connect as root instead. More info: https://aka.ms/dev-containers-non-root
+	"remoteUser": "node"
+}
