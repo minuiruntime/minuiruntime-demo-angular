@@ -42,6 +42,40 @@
         </div>
       }
     </div>
+
+    <div class="json-editor-section">
+      <h2>Direct JSON Rendering</h2>
+      <p class="section-description">Edit the JSON below and click "Render" to see MinUI Runtime convert it to HTML</p>
+      
+      <div class="editor-container">
+        <div class="editor-panel">
+          <h3>MinUI JSON Input</h3>
+          <textarea 
+            class="json-input" 
+            [(ngModel)]="jsonInput"
+            placeholder="Enter MinUI JSON here..."
+            spellcheck="false"></textarea>
+          <button class="btn btn-render" (click)="renderJson()">Render JSON</button>
+        </div>
+        
+        <div class="output-panel">
+          <h3>Rendered Output</h3>
+          @if (renderError()) {
+            <div class="error-message">
+              <strong>Error:</strong> {{ renderError() }}
+            </div>
+          }
+          @if (renderedOutput()) {
+            <div class="rendered-container" [innerHTML]="renderedOutput()"></div>
+          }
+          @if (!renderError() && !renderedOutput()) {
+            <div class="empty-state">
+              <p>Rendered output will appear here</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
   </div>
 
   <footer class="app-footer">
