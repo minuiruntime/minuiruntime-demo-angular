@@ -4,6 +4,8 @@
   "type": "module",
   "scripts": {
     "ng": "ng",
+    "prebuild": "mkdir -p src/assets/wasm && cp node_modules/@minuiruntime/minui_rt/minui_rt_bg.wasm src/assets/wasm/",
+    "prestart": "mkdir -p src/assets/wasm && cp node_modules/@minuiruntime/minui_rt/minui_rt_bg.wasm src/assets/wasm/",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
@@ -30,7 +32,7 @@
     "@angular/forms": "^20.3.0",
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
-    "@minuiruntime/minui_rt": "^0.1.0",
+    "@minuiruntime/minui_rt": "^0.1.5",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
