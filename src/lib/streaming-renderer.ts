@@ -1,3 +1,5 @@
+import initWasm, { MinUiRuntime } from "@minuiruntime/minui_rt";
+
 /**
  * StreamingRenderer class that wraps the MinUIRuntime WASM engine
  * for real-time SSR and incremental HTML generation
@@ -19,44 +21,20 @@ export class StreamingRenderer {
    */
   private async initRenderer(): Promise<void> {
     try {
-      console.log('Loading MinUiRuntime WASM from npm package...');
-      // Import from the npm package @minuiruntime/minui_rt
-      const wasmModule = await import('@minuiruntime/minui_rt');
-      console.log('WASM module loaded, initializing with custom path...');
-      
-      // Initialize WASM with explicit path where Angular copies it
-      const initFn = wasmModule.default;
-      if (typeof initFn === 'function') {
-        await initFn('/assets/wasm/minui_rt_bg.wasm');
-        console.log('WASM initialized successfully');
-      }
-      
-      const MinUiRuntime = wasmModule.MinUiRuntime;
-      if (!MinUiRuntime) {
-        throw new Error('MinUiRuntime class not found in module');
-      }
-      
-      console.log('Creating streaming session...');
-      
-      // Create streaming session using static method
-      // Enable debug for demo sessions only
-      this.session = MinUiRuntime.createStreamingSession({
-        mode: "auto", // "auto" | "json" | "ai"
-        debug: true,
-      });
-      
-      // Verify session was created successfully
-      if (!this.session) {
-        throw new Error('Failed to create streaming session');
-      }
-      
+      console.log("Initializing MinUiRuntime WASM...");
+
+      await initWasm("/assets/wasm/minui_rt_bg.wasm");
+
+      console.log("Creating streaming session...");
+      this.session = MinUiRuntime.createStreamingSession({ mode: "auto" });
+
       this.initialized = true;
       this.currentPatchCount = 0;
-      console.log('MinUIRuntime WASM streaming session initialized successfully');
-    } catch (error) {
-      console.error('Failed to initialize streaming renderer:', error);
-      this.initialized = false;
-      throw error;
+
+      console.log("StreamingRenderer fully initialized.");
+    } catch (err) {
+      console.error("Failed to initialize StreamingRenderer:", err);
+      throw err;
     }
   }
 
