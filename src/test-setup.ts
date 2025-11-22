@@ -1,9 +1,9 @@
 // Polyfill for performance.now() in Node
-if (typeof performance === 'undefined') {
-  (global as any).performance = {
+if (typeof performance === 'undefined' && typeof globalThis !== 'undefined') {
+  (globalThis as any).performance = {
     now: () => {
-      const [seconds, nanoseconds] = process.hrtime();
-      return seconds * 1000 + nanoseconds / 1000000;
+      // Fallback implementation for Node.js environment
+      return Date.now();
     }
   };
 }

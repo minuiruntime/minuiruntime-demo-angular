@@ -30,14 +30,16 @@
     "@angular/forms": "^20.3.0",
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
+    "@minuiruntime/minui_rt": "^0.1.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
     "@angular/build": "^20.3.10",
     "@angular/cli": "^20.3.10",
     "@angular/compiler-cli": "^20.3.0",
-    "@angular/material": "^20.2.13",
+    "@angular/material": "^20.2.14",
     "@types/jasmine": "~5.1.0",
+    "@types/node": "^24.10.1",
     "eslint": "^9.39.1",
     "jasmine": "^5.12.0",
     "jasmine-core": "~5.9.0",
