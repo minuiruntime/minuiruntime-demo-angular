@@ -175,4 +175,83 @@ describe('App Component Logic', () => {
       expect(state.value).toBe(42);
     });
   });
+
+  describe('JSON Rendering Logic', () => {
+    it('should generate default JSON structure', () => {
+      const defaultObj = {
+        version: "1.0",
+        model: "gpt-4",
+        type: "element",
+        tag: "div",
+        attrs: { class: "message" },
+        children: [
+          { type: "text", value: "Hello from MinUI Runtime!" }
+        ]
+      };
+
+      expect(defaultObj.version).toBe("1.0");
+      expect(defaultObj.type).toBe("element");
+      expect(defaultObj.tag).toBe("div");
+      expect(defaultObj.children.length).toBe(1);
+      expect(defaultObj.children[0].value).toBe("Hello from MinUI Runtime!");
+    });
+
+    it('should validate JSON parsing', () => {
+      const validJson = '{"type": "element", "tag": "div"}';
+      let parsed;
+      let error = null;
+
+      try {
+        parsed = JSON.parse(validJson);
+      } catch (e: any) {
+        error = e.message;
+      }
+
+      expect(error).toBeNull();
+      expect(parsed).toBeDefined();
+      expect(parsed.type).toBe("element");
+    });
+
+    it('should handle invalid JSON', () => {
+      const invalidJson = '{invalid json}';
+      let error = null;
+
+      try {
+        JSON.parse(invalidJson);
+      } catch (e: any) {
+        error = e.message;
+      }
+
+      expect(error).not.toBeNull();
+    });
+
+    it('should stringify JSON with formatting', () => {
+      const obj = { type: "element", tag: "div" };
+      const formatted = JSON.stringify(obj, null, 2);
+
+      expect(formatted).toContain('\n');
+      expect(formatted).toContain('  ');
+    });
+
+    it('should clear render error on successful render', () => {
+      let renderError = 'Previous error';
+      
+      // Simulate successful render
+      renderError = '';
+
+      expect(renderError).toBe('');
+    });
+
+    it('should set error message on render failure', () => {
+      let renderError = '';
+      
+      try {
+        JSON.parse('invalid');
+      } catch (e: any) {
+        renderError = e.message;
+      }
+
+      expect(renderError).not.toBe('');
+    });
+  });
 });

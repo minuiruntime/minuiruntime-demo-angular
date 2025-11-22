@@ -1,43 +1,45 @@
+import initWasm, { MinUiRuntime } from "@minuiruntime/minui_rt";
+
 /**
  * StreamingRenderer class that wraps the MinUIRuntime WASM engine
  * for real-time SSR and incremental HTML generation
  */
 export class StreamingRenderer {
-  private wasmRenderer: any = null;
+  // Streaming session - initialized after WASM loads
+  private session: any = null;
   private initialized: boolean = false;
   private initPromise: Promise<void> | null = null;
+  private currentPatchCount: number = 0;
 
   constructor() {
     console.log('StreamingRenderer initializing...');
-    this.initPromise = this.initWasm();
+    this.initPromise = this.initRenderer();
   }
 
   /**
-   * Initialize the WASM module
+   * Initialize the WASM streaming renderer using createStreamingSession
    */
-  private async initWasm(): Promise<void> {
+  private async initRenderer(): Promise<void> {
     try {
-      console.log('Loading WASM module...');
-      // Use dynamic import to load the WASM module
-      const wasmModule = await import('../assets/wasm/minui_rt.js');
-      console.log('WASM module loaded, initializing...');
-      
-      // Initialize the WASM module with the correct path
-      await wasmModule.default('/assets/wasm/minui_rt_bg.wasm');
-      console.log('WASM initialized, creating renderer...');
-      
-      this.wasmRenderer = new wasmModule.WasmStreamingRenderer();
+      console.log("Initializing MinUiRuntime WASM...");
+
+      await initWasm("/assets/wasm/minui_rt_bg.wasm");
+
+      console.log("Creating streaming session...");
+      this.session = MinUiRuntime.createStreamingSession({ mode: "auto" });
+
       this.initialized = true;
-      console.log('MinUIRuntime WASM initialized successfully');
-    } catch (error) {
-      console.error('Failed to initialize WASM:', error);
-      this.initialized = false;
-      throw error;
+      this.currentPatchCount = 0;
+
+      console.log("StreamingRenderer fully initialized.");
+    } catch (err) {
+      console.error("Failed to initialize StreamingRenderer:", err);
+      throw err;
     }
   }
 
   /**
-   * Wait for WASM to be initialized
+   * Wait for renderer to be initialized
    */
   private async ensureInitialized(): Promise<void> {
     if (this.initialized) return;
@@ -47,57 +49,97 @@ export class StreamingRenderer {
     }
     
     if (!this.initialized) {
-      throw new Error('WASM initialization failed');
+      throw new Error('Streaming renderer initialization failed');
     }
   }
 
   /**
-   * Process a JSON fragment and generate HTML
-   * @param jsonFragment - JSON data to process
-   * @returns Generated HTML string
+   * Handle an incoming chunk (JSON or AI text)
+   * 
+   * Precondition: session must be initialized via createStreamingSession()
+   * 
+   * @param {string|object} chunk - Input data (JSON string/object or AI text)
+   * @returns {string} The resulting HTML
    */
-  async processFragment(jsonFragment: string): Promise<string> {
+  async processFragment(chunk: string | object): Promise<string> {
     try {
       await this.ensureInitialized();
       
-      if (!this.wasmRenderer) {
-        throw new Error('WASM renderer not initialized');
+      // Invariant check: session must be initialized
+      if (!this.session) {
+        const error = new Error("StreamingSession not initialized. Call createStreamingSession() first.");
+        console.error(`❌ ${error.message}`);
+        throw error;
       }
 
-      console.log('Processing fragment:', jsonFragment.substring(0, 100));
+      // Convert object to string if needed
+      const input = typeof chunk === 'string' ? chunk : JSON.stringify(chunk);
+      console.log('Processing chunk:', input.substring(0, 100));
       
-      // Use feed_json for strict schema-compliant JSON
-      const html = this.wasmRenderer.feed_json(jsonFragment);
-      console.log('Generated HTML:', html);
-      return html;
+      // Update session with chunk (auto-detects JSON vs AI based on mode)
+      // Returns a Frame object with html, patchesApplied, and diagnostics
+      const frame = this.session.update(input);
+      
+      // Update total patch count
+      this.currentPatchCount = frame.patchesApplied;
+      
+      // Log diagnostics if available
+      if (frame.diagnostics) {
+        const delta = frame.diagnostics.patchCountDelta ?? 0;
+        console.log(`  └─ Patches: ${frame.patchesApplied} (Δ +${delta})`);
+        
+        // Log any errors
+        if (frame.diagnostics.error) {
+          console.error('Frame error:', frame.diagnostics.error);
+        }
+      }
+      
+      return frame.html;
     } catch (error) {
-      console.error('Error processing fragment:', error);
-      return `<!-- Error: ${error} -->`;
+      const errorMsg = `❌ Error processing chunk: ${error}`;
+      console.error(errorMsg);
+      throw error;
     }
   }
 
   /**
-   * Get the current patch count
+   * Get the current patch count from the last frame
    */
   getPatchCount(): number {
-    if (!this.wasmRenderer) return 0;
-    return this.wasmRenderer.patches_applied();
+    return this.currentPatchCount;
   }
 
   /**
    * Get the accumulated HTML buffer
    */
   getBuffer(): string {
-    if (!this.wasmRenderer) return '';
-    return this.wasmRenderer.html();
+    if (!this.session) return '';
+    try {
+      return this.session.html();
+    } catch (error) {
+      console.error('Error getting HTML buffer:', error);
+      return '';
+    }
   }
 
   /**
-   * Reset the renderer state
+   * Reset the renderer state by creating a new session
    */
-  reset(): void {
-    if (this.wasmRenderer) {
-      this.wasmRenderer.reset();
+  async reset(): Promise<void> {
+    if (this.session) {
+      try {
+        // Reset the existing session
+        this.session.reset();
+        this.currentPatchCount = 0;
+        console.log('Session reset successfully');
+      } catch (error) {
+        console.error('Error resetting session, reinitializing:', error);
+        // If reset fails, re-create the session
+        this.initialized = false;
+        this.session = null;
+        this.currentPatchCount = 0;
+        await this.initRenderer();
+      }
     }
   }
 }
