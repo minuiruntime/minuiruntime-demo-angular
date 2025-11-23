@@ -13,6 +13,8 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": "docs",
+            "baseHref": "/minuiruntime-demo-angular/",
             "browser": "src/main.ts",
             "polyfills": [
               "zone.js"

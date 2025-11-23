@@ -2,6 +2,8 @@
 
 Official Angular demo showcasing **real-time AI UI streaming** using the **MinUiRuntime WebAssembly engine**.
 
+**🌐 [Live Demo](https://minuiruntime.github.io/minuiruntime-demo-angular/)**
+
 ---
 
 ## 🎯 About MinUiRuntime
@@ -67,7 +69,7 @@ http://localhost:4200
 Located at:
 
 ```
-src/app/streaming/streaming-renderer.ts
+src/lib/streaming-renderer.ts
 ```
 
 Loads the MinUiRuntime WebAssembly module and processes streamed JSON fragments.
@@ -76,7 +78,7 @@ Loads the MinUiRuntime WebAssembly module and processes streamed JSON fragments.
 Located at:
 
 ```
-src/app/services/streaming.service.ts
+src/services/streaming.service.ts
 ```
 
 Simulates AI output by generating JSON fragments at timed intervals.
@@ -194,6 +196,36 @@ src/
 ├── tests/
 └── test-setup.ts
 ```
+
+---
+
+## 🚀 Deployment
+
+### GitHub Pages
+
+This demo is deployed to GitHub Pages from the `/docs` folder.
+
+**To deploy your own:**
+
+1. Build the production bundle:
+   ```bash
+   npm run build
+   ```
+
+2. Commit the `/docs` folder to your repository:
+   ```bash
+   git add docs/
+   git commit -m "Build production bundle for GitHub Pages"
+   git push
+   ```
+
+3. Enable GitHub Pages:
+   - Go to repository **Settings** → **Pages**
+   - Set **Source** to "Deploy from a branch"
+   - Select **main** branch and **/docs** folder
+   - Click **Save**
+
+Your demo will be live at: `https://minuiruntime.github.io/minuiruntime-demo-angular/`
 
 ---
 
