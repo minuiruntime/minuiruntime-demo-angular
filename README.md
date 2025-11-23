@@ -45,8 +45,6 @@ Navigate to:
 http://localhost:4200
 ```
 
-The app reloads automatically as you modify files.
-
 ---
 
 ## 🧠 How It Works
@@ -83,28 +81,77 @@ Displays:
 
 ---
 
-## 🧩 Minimal Example Usage
+## 🧩 Minimal Example Usage (Server Side Include example)
 
 ```ts
-import { WasmStreamingRenderer } from "@minuiruntime/minui_rt";
+import init, { MinUiRuntime } from "@minuiruntime/minui_rt";
 
-async function example() {
-  const renderer = new WasmStreamingRenderer();
+// Initialize WASM first (required before using the runtime)
+await init("/assets/wasm/minui_rt_bg.wasm");
+// OR just: await init(); for auto-loading from default path
 
-  const jsonFrame = {
-    tag: "div",
-    children: [
-      { tag: "p", text: "Hello from MinUiRuntime!" }
-    ]
-  };
+// This can also be a pure string from the LLM
+const jsonString = JSON.stringify({
+  version: "1.0",
+  model: "gpt-4", // optional
+  type: "element",
+  tag: "div",
+  attrs: { class: "message" },
+  children: [
+    { type: "text", value: "Hello from MinUI Runtime!" }
+  ]
+});
 
-  const result = renderer.feed_json(jsonFrame);
+// Render directly — returns Frame object
+const frame = MinUiRuntime.render(jsonString);
 
-  console.log("HTML:", result.html);
-  console.log("Patches:", result.patches);
-}
+console.log(frame.html);
+// → <div class="message">Hello from MinUI Runtime!</div>
 ```
+---
+## 🌊 Streaming Usage — Incremental Updates
+For AI-powered applications that stream JSON chunks incrementally:
 
+```ts
+import init, { MinUiRuntime } from "@minuiruntime/minui_rt";
+
+// Initialize WASM first (required before using the runtime)
+await init("/assets/wasm/minui_rt_bg.wasm");
+
+// Create a streaming session with options
+const session = MinUiRuntime.createStreamingSession({ mode: "auto" });
+
+// Update session with chunks as they arrive
+const chunk = '{"type":"element","tag":"div","children":[{"type":"text","value":"Hello"}]}';
+const frame = session.update(chunk);
+
+// Log frame fields to inspect the response
+console.log("Frame fields:", {
+  html: frame.html,
+  patchesApplied: frame.patchesApplied,
+  diagnostics: frame.diagnostics
+});
+
+// Access the rendered HTML
+console.log(frame.html);
+// → <div>Hello</div>
+
+// Access diagnostics
+const delta = frame.diagnostics?.patchCountDelta ?? 0;
+console.log(`Applied ${delta} patches in this update`);
+
+// Continue updating as more chunks arrive
+const chunk2 = '{"type":"element","tag":"div","children":[{"type":"text","value":"Hello, World!"}]}';
+const frame2 = session.update(chunk2);
+console.log(frame2.html);
+// → <div>Hello, World!</div>
+
+// Get current HTML at any time
+const currentHtml = session.html();
+
+// Reset session to start fresh
+session.reset();
+```
 ---
 
 ## 📁 Project Structure
