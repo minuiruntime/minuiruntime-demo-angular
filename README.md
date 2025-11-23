@@ -159,15 +159,26 @@ session.reset();
 ```
 src/
 ├── app/
-│   ├── app.component.ts
-│   ├── app.component.html
-│   └── app.component.css
-├── streaming/
+│   ├── app.config.ts
+│   ├── app.css
+│   ├── app.html
+│   ├── app-logic.spec.ts
+│   ├── app.routes.ts
+│   └── app.ts
+├── assets/
+│   └── wasm/
+│       └── minui_rt_bg.wasm
+├── index.html
+├── lib/
+│   ├── streaming-renderer-logic.spec.ts
 │   └── streaming-renderer.ts     # WASM-backed renderer
+├── main.ts
 ├── services/
-│   └── streaming.service.ts     # JSON generator for demo
-└── assets/
-    └── wasm/                    # minui_rt_bg.wasm
+│   ├── streaming-logic.spec.ts
+│   └── streaming.service.ts      # JSON generator for demo
+├── styles.css
+├── tests/
+└── test-setup.ts
 ```
 
 ---
