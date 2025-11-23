@@ -165,7 +165,9 @@ export class StreamingService {
   startStreaming(intervalMs: number = 500): Observable<{ html: string; patchCount: number }> {
     this.stopSubject = new Subject<void>();
 
-    return interval(intervalMs).pipe(
+    // Reset the renderer session before starting to prevent state corruption
+    return from(this.renderer.reset()).pipe(
+      switchMap(() => interval(intervalMs)),
       takeUntil(this.stopSubject),
       switchMap(async () => {
         const fragment = this.generateRandomFragment();
@@ -189,5 +191,12 @@ export class StreamingService {
    */
   getRenderer(): StreamingRenderer {
     return this.renderer;
+  }
+
+  /**
+   * Reset the renderer session
+   */
+  async reset(): Promise<void> {
+    await this.renderer.reset();
   }
 }
