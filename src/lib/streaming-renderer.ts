@@ -1,4 +1,5 @@
 import initWasm, { MinUiRuntime } from "@minuiruntime/minui_rt";
+import { getWasmUrl } from '../app/app.config.wasm';
 
 /**
  * StreamingRenderer class that wraps the MinUIRuntime WASM engine
@@ -23,7 +24,7 @@ export class StreamingRenderer {
     try {
       console.log("Initializing MinUiRuntime WASM...");
 
-      await initWasm("assets/wasm/minui_rt_bg.wasm");
+      await initWasm(getWasmUrl());
 
       console.log("Creating streaming session...");
       this.session = MinUiRuntime.createStreamingSession({ mode: "auto" });
