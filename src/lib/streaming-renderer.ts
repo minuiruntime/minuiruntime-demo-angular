@@ -128,7 +128,7 @@ export class StreamingRenderer {
   async reset(): Promise<void> {
     if (this.session) {
       try {
-        // Reset the existing session
+        // Reset the existing session (TODO: to fix potential issues with reset)
         this.session.reset();
         this.currentPatchCount = 0;
         console.log('Session reset successfully');
