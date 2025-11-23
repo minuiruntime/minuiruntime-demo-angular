@@ -1,76 +1,129 @@
-# minui-demo-angular
-Angular demo showcasing real-time AI UI streaming with the MinUIRuntime WebAssembly engine. Simulates a chat interface where JSON fragments stream into the StreamingRenderer for incremental DOM updates, demonstrating MinUIRuntime's real-time SSR and incremental HTML generation.
+# minuiruntime-demo-angular
 
-## Features
+Official Angular demo showcasing **real-time AI UI streaming** using the **MinUiRuntime WebAssembly engine**.  
+This example demonstrates how JSON fragments stream into the `WasmStreamingRenderer` to produce **incremental HTML updates** — enabling fast, deterministic SSR-style rendering powered by Rust/WASM.
 
-- **Real-time Streaming**: Components appear dynamically as JSON fragments are processed
-- **Mock WASM Engine**: StreamingRenderer class simulates MinUIRuntime WASM module
-- **Multiple Component Types**: Messages, cards, lists, buttons, and text fragments
-- **Auto-Stop Timer**: Automatically stops streaming after 2 minutes
-- **Live Patch Counter**: Displays the number of incremental updates applied
-- **Modern UI**: Clean, responsive design with gradient backgrounds and animations
+---
 
-## Getting Started
+## 🚀 Features
 
-### Prerequisites
+- **Real WASM Engine** — uses `@minuiruntime/minui_rt` for JSON → HTML rendering  
+- **Streaming Rendering** — incremental patches update the UI in real time  
+- **Deterministic Output** — safe, structured, predictable HTML from JSON  
+- **Live Patch Counter** — shows how many streaming updates have been applied  
+- **Modern Angular UI** — clean preview area with start/stop controls  
 
-- Node.js 20.x or later
-- npm 10.x or later
+---
 
-### Installation
+## 📦 Getting Started
+
+### **Prerequisites**
+- Node.js 20+
+- npm 10+
+
+### **Install dependencies**
 
 ```bash
 npm install
 ```
 
-### Development Server
+### **Install MinUiRuntime**
+
+```bash
+npm install @minuiruntime/minui_rt
+```
+
+### **Start the development server**
 
 ```bash
 npm start
 ```
 
-Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Navigate to:
 
-### Build
-
-```bash
-npm run build
+```
+http://localhost:4200
 ```
 
-The build artifacts will be stored in the `dist/` directory.
+The app reloads automatically as you modify files.
 
-### Running Tests
+---
 
-```bash
-npm test
+## 🧠 How It Works
+
+### **1. WasmStreamingRenderer**  
+Located at:
+
+```
+src/app/streaming/streaming-renderer.ts
 ```
 
-## How It Works
+Loads the MinUiRuntime WebAssembly module and processes streamed JSON fragments.
 
-1. **StreamingRenderer** (`src/lib/streaming-renderer.ts`): Mock WASM module that processes JSON fragments and generates HTML components
-2. **StreamingService** (`src/services/streaming.service.ts`): Angular service that generates random JSON fragments at 500ms intervals
-3. **App Component**: Main UI with Start/Stop controls, status display, and live preview area
+### **2. StreamingService**  
+Located at:
 
-The demo simulates real-time AI UI streaming by:
-- Generating random JSON fragments with different component types
-- Processing each fragment through the StreamingRenderer
-- Incrementally updating the DOM with new components
-- Tracking patch count and streaming status
+```
+src/app/services/streaming.service.ts
+```
 
-## Architecture
+Simulates AI output by generating JSON fragments at timed intervals.
+
+### **3. AppComponent**  
+Displays:
+- streaming HTML output  
+- running patch counter  
+- start/stop buttons  
+
+### **Flow**
+1. JSON fragment generated  
+2. Fragment is fed to the WASM engine  
+3. Engine returns HTML + patch count  
+4. UI updates instantly  
+
+---
+
+## 🧩 Minimal Example Usage
+
+```ts
+import { WasmStreamingRenderer } from "@minuiruntime/minui_rt";
+
+async function example() {
+  const renderer = new WasmStreamingRenderer();
+
+  const jsonFrame = {
+    tag: "div",
+    children: [
+      { tag: "p", text: "Hello from MinUiRuntime!" }
+    ]
+  };
+
+  const result = renderer.feed_json(jsonFrame);
+
+  console.log("HTML:", result.html);
+  console.log("Patches:", result.patches);
+}
+```
+
+---
+
+## 📁 Project Structure
 
 ```
 src/
 ├── app/
-│   ├── app.ts          # Main component with streaming controls
-│   ├── app.html        # Template with preview area
-│   └── app.css         # Component styles
+│   ├── app.component.ts
+│   ├── app.component.html
+│   └── app.component.css
+├── streaming/
+│   └── streaming-renderer.ts     # WASM-backed renderer
 ├── services/
-│   └── streaming.service.ts  # JSON fragment generation
-└── lib/
-    └── streaming-renderer.ts # Mock WASM renderer
+│   └── streaming.service.ts     # JSON generator for demo
+└── assets/
+    └── wasm/                    # minui_rt_bg.wasm
 ```
 
-## License
+---
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+## 📝 License
+MIT License. See the `LICENSE` file for details.
