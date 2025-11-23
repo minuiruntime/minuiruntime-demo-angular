@@ -163,7 +163,6 @@ export class StreamingService {
    * @returns Observable of HTML strings
    */
   startStreaming(intervalMs: number = 500): Observable<{ html: string; patchCount: number }> {
-    this.renderer.reset();
     this.stopSubject = new Subject<void>();
 
     return interval(intervalMs).pipe(

@@ -121,25 +121,4 @@ export class StreamingRenderer {
       return '';
     }
   }
-
-  /**
-   * Reset the renderer state by creating a new session
-   */
-  async reset(): Promise<void> {
-    if (this.session) {
-      try {
-        // Reset the existing session (TODO: to fix potential issues with reset)
-        this.session.reset();
-        this.currentPatchCount = 0;
-        console.log('Session reset successfully');
-      } catch (error) {
-        console.error('Error resetting session, reinitializing:', error);
-        // If reset fails, re-create the session
-        this.initialized = false;
-        this.session = null;
-        this.currentPatchCount = 0;
-        await this.initRenderer();
-      }
-    }
-  }
 }
