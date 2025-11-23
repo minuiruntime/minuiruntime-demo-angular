@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, interval, Subject, from } from 'rxjs';
 import { takeUntil, map, switchMap } from 'rxjs/operators';
 import { StreamingRenderer } from '../lib/streaming-renderer';
@@ -6,7 +6,7 @@ import { StreamingRenderer } from '../lib/streaming-renderer';
 @Injectable({
   providedIn: 'root'
 })
-export class StreamingService {
+export class StreamingService implements OnDestroy {
   private renderer: StreamingRenderer;
   private stopSubject = new Subject<void>();
   
@@ -198,5 +198,15 @@ export class StreamingService {
    */
   async reset(): Promise<void> {
     await this.renderer.reset();
+  }
+
+  /**
+   * Cleanup on service destruction
+   */
+  ngOnDestroy(): void {
+    this.stopStreaming();
+    this.renderer.cleanup().catch(err => {
+      console.error('Error during renderer cleanup:', err);
+    });
   }
 }
