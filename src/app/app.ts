@@ -4,8 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { StreamingService } from '../services/streaming.service';
 import { Subscription } from 'rxjs';
-import initWasm, { MinUiRuntime } from '@minuiruntime/minui_rt';
-import { getWasmUrl } from './app.config.wasm';
+import { MinUiRuntime } from '@minuiruntime/minui_rt';
 
 @Component({
   selector: 'app-root',
@@ -28,23 +27,12 @@ export class App implements OnDestroy {
   private streamSubscription?: Subscription;
   private autoStopTimeout?: any;
   private readonly AUTO_STOP_DURATION = 2 * 60 * 1000; // 2 minutes
-  private wasmInitialized = false;
 
   constructor(
     private streamingService: StreamingService,
     private sanitizer: DomSanitizer
   ) {
-    this.initializeWasm();
-  }
-
-  private async initializeWasm(): Promise<void> {
-    try {
-      await initWasm(getWasmUrl());
-      this.wasmInitialized = true;
-      console.log('WASM initialized for direct rendering');
-    } catch (error) {
-      console.error('Failed to initialize WASM:', error);
-    }
+    // WASM is initialized globally by StreamingRenderer
   }
 
   private getDefaultJson(): string {
@@ -64,11 +52,6 @@ export class App implements OnDestroy {
   renderJson(): void {
     this.renderError.set('');
     this.renderedOutput.set('');
-
-    if (!this.wasmInitialized) {
-      this.renderError.set('WASM not yet initialized. Please wait a moment and try again.');
-      return;
-    }
 
     try {
       // Parse JSON to validate it
@@ -93,10 +76,12 @@ export class App implements OnDestroy {
     }
   }
 
-  startStreaming(): void {
+  async startStreaming(): Promise<void> {
     if (this.isStreaming()) {
       console.warn('Streaming already in progress, stopping first...');
-      this.stopStreaming();
+      await this.stopStreaming();
+      // Small delay to ensure cleanup completes
+      await new Promise(resolve => setTimeout(resolve, 100));
     }
 
     this.isStreaming.set(true);
@@ -127,7 +112,7 @@ export class App implements OnDestroy {
     }, this.AUTO_STOP_DURATION);
   }
 
-  stopStreaming(): void {
+  async stopStreaming(): Promise<void> {
     if (!this.isStreaming()) return;
 
     this.isStreaming.set(false);
@@ -142,6 +127,9 @@ export class App implements OnDestroy {
       clearTimeout(this.autoStopTimeout);
       this.autoStopTimeout = undefined;
     }
+    
+    // Give time for any in-flight operations to complete
+    await new Promise(resolve => setTimeout(resolve, 50));
   }
 
   ngOnDestroy(): void {
