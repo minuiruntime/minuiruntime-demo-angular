@@ -122,4 +122,26 @@ export class StreamingRenderer {
       return '';
     }
   }
+
+  /**
+   * Reset the streaming session to start fresh
+   * This prevents state corruption between streaming runs
+   */
+  async reset(): Promise<void> {
+    try {
+      await this.ensureInitialized();
+      
+      console.log('Resetting streaming session...');
+      
+      // Simply replace the old session with a new one
+      // The old session will be garbage collected automatically
+      this.session = MinUiRuntime.createStreamingSession({ mode: "auto" });
+      this.currentPatchCount = 0;
+      
+      console.log('Streaming session reset complete.');
+    } catch (error) {
+      console.error('Failed to reset streaming session:', error);
+      throw error;
+    }
+  }
 }

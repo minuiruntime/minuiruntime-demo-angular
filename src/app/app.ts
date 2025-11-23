@@ -94,7 +94,10 @@ export class App implements OnDestroy {
   }
 
   startStreaming(): void {
-    if (this.isStreaming()) return;
+    if (this.isStreaming()) {
+      console.warn('Streaming already in progress, stopping first...');
+      this.stopStreaming();
+    }
 
     this.isStreaming.set(true);
     this.htmlContent.set('');
