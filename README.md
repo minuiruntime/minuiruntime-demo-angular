@@ -1,11 +1,25 @@
-# minuiruntime-demo-angular
+# MinUiRuntime Angular Demo
 
-Official Angular demo showcasing **real-time AI UI streaming** using the **MinUiRuntime WebAssembly engine**.  
-This example demonstrates how JSON fragments stream into the `WasmStreamingRenderer` to produce **incremental HTML updates** — enabling fast, deterministic SSR-style rendering powered by Rust/WASM.
+Official Angular demo showcasing **real-time AI UI streaming** using the **MinUiRuntime WebAssembly engine**.
 
 ---
 
-## 🚀 Features
+## 🎯 About MinUiRuntime
+
+**MinUiRuntime** is a high-performance WebAssembly engine that transforms JSON streams into production-ready HTML with **zero unsafe operations**. Built in Rust, it delivers:
+
+- **🔒 Safe & Deterministic** — No XSS vulnerabilities, predictable output every time
+- **⚡ Blazing Fast** — WASM-powered rendering with minimal JavaScript overhead
+- **🌊 True Streaming** — Process JSON fragments as they arrive from AI models
+- **🎨 Framework Agnostic** — Works with React, Angular, Vue, Svelte, or vanilla JS
+- **📦 Tiny Bundle** — Lightweight WASM module (~100KB gzipped)
+- **🔧 Zero Config** — Drop-in solution with no build tooling required
+
+Perfect for AI-powered applications that need to render LLM output in real-time while maintaining security and performance.
+
+---
+
+## 🚀 Live Demo Features
 
 - **Real WASM Engine** — uses `@minuiruntime/minui_rt` for JSON → HTML rendering  
 - **Streaming Rendering** — incremental patches update the UI in real time  

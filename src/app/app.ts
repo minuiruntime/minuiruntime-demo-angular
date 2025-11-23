@@ -14,7 +14,7 @@ import initWasm, { MinUiRuntime } from '@minuiruntime/minui_rt';
 })
 export class App implements OnDestroy {
   // Made public for testing - in production would be protected
-  public readonly title = signal('MinUI Demo');
+  public readonly title = signal('MinUiRuntime Angular Demo');
   public readonly isStreaming = signal(false);
   public readonly patchCount = signal(0);
   public readonly htmlContent = signal<SafeHtml>('');
