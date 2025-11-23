@@ -38,7 +38,7 @@ export class App implements OnDestroy {
 
   private async initializeWasm(): Promise<void> {
     try {
-      await initWasm('/assets/wasm/minui_rt_bg.wasm');
+      await initWasm('assets/wasm/minui_rt_bg.wasm');
       this.wasmInitialized = true;
       console.log('WASM initialized for direct rendering');
     } catch (error) {

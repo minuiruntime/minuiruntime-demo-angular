@@ -23,7 +23,7 @@ export class StreamingRenderer {
     try {
       console.log("Initializing MinUiRuntime WASM...");
 
-      await initWasm("/assets/wasm/minui_rt_bg.wasm");
+      await initWasm("assets/wasm/minui_rt_bg.wasm");
 
       console.log("Creating streaming session...");
       this.session = MinUiRuntime.createStreamingSession({ mode: "auto" });
