@@ -1,4 +1,5 @@
 import initWasm, { MinUiRuntime } from "@minuiruntime/minui_rt";
+import { getWasmUrl } from '../app/app.config.wasm';
 
 /**
  * StreamingRenderer class that wraps the MinUIRuntime WASM engine
@@ -23,7 +24,7 @@ export class StreamingRenderer {
     try {
       console.log("Initializing MinUiRuntime WASM...");
 
-      await initWasm("assets/wasm/minui_rt_bg.wasm");
+      await initWasm(getWasmUrl());
 
       console.log("Creating streaming session...");
       this.session = MinUiRuntime.createStreamingSession({ mode: "auto" });
@@ -119,27 +120,6 @@ export class StreamingRenderer {
     } catch (error) {
       console.error('Error getting HTML buffer:', error);
       return '';
-    }
-  }
-
-  /**
-   * Reset the renderer state by creating a new session
-   */
-  async reset(): Promise<void> {
-    if (this.session) {
-      try {
-        // Reset the existing session (TODO: to fix potential issues with reset)
-        this.session.reset();
-        this.currentPatchCount = 0;
-        console.log('Session reset successfully');
-      } catch (error) {
-        console.error('Error resetting session, reinitializing:', error);
-        // If reset fails, re-create the session
-        this.initialized = false;
-        this.session = null;
-        this.currentPatchCount = 0;
-        await this.initRenderer();
-      }
     }
   }
 }

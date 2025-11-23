@@ -5,6 +5,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { StreamingService } from '../services/streaming.service';
 import { Subscription } from 'rxjs';
 import initWasm, { MinUiRuntime } from '@minuiruntime/minui_rt';
+import { getWasmUrl } from './app.config.wasm';
 
 @Component({
   selector: 'app-root',
@@ -38,7 +39,7 @@ export class App implements OnDestroy {
 
   private async initializeWasm(): Promise<void> {
     try {
-      await initWasm('assets/wasm/minui_rt_bg.wasm');
+      await initWasm(getWasmUrl());
       this.wasmInitialized = true;
       console.log('WASM initialized for direct rendering');
     } catch (error) {
