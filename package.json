@@ -7,7 +7,8 @@
     "prebuild": "mkdir -p src/assets/wasm && cp node_modules/@minuiruntime/minui_rt/minui_rt_bg.wasm src/assets/wasm/",
     "prestart": "mkdir -p src/assets/wasm && cp node_modules/@minuiruntime/minui_rt/minui_rt_bg.wasm src/assets/wasm/",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build && npm run postbuild",
+    "postbuild": "test -d docs/browser && cp -r docs/browser/* docs/ && rm -rf docs/browser || true",
     "watch": "ng build --watch --configuration development",
     "test": "jasmine --config=jasmine.json",
     "test:karma": "ng test"
