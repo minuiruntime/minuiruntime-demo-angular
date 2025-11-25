@@ -38,7 +38,6 @@ export class App implements OnDestroy {
   private getDefaultJson(): string {
     const defaultObj = {
       version: "1.0",
-      model: "gpt-4",
       type: "element",
       tag: "div",
       attrs: { class: "message" },
