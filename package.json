@@ -7,6 +7,7 @@
     "prebuild": "rm -rf .angular/cache && mkdir -p src/assets/wasm && cp -f node_modules/@minuiruntime/minui_rt/minui_rt_bg.wasm src/assets/wasm/",
     "prestart": "rm -rf .angular/cache && mkdir -p src/assets/wasm && cp -f node_modules/@minuiruntime/minui_rt/minui_rt_bg.wasm src/assets/wasm/",
     "start": "ng serve",
+    "serve:docs": "mkdir -p .tmp/minuiruntime-demo-angular && cp -r docs/* .tmp/minuiruntime-demo-angular/ && npx http-server .tmp -p 4200 -o /minuiruntime-demo-angular/",
     "build": "ng build && npm run postbuild",
     "postbuild": "test -d docs/browser && cp -r docs/browser/* docs/ && rm -rf docs/browser || true",
     "watch": "ng build --watch --configuration development",
@@ -33,7 +34,7 @@
     "@angular/forms": "^20.3.0",
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
-    "@minuiruntime/minui_rt": "0.2.1",
+    "@minuiruntime/minui_rt": "0.3.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {

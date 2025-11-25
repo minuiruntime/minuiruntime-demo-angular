@@ -4,6 +4,7 @@
 /dist
 !/docs
 /tmp
+/.tmp
 /out-tsc
 /bazel-out
 
