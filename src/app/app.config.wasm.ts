@@ -4,7 +4,7 @@
  */
 export const WASM_CONFIG = {
   // Version should match the package version or be updated manually
-  version: '0.3.0',
+  version: '0.4.0',
   path: 'assets/wasm/minui_rt_bg.wasm',
 } as const;
 
